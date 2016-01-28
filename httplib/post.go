@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func PostJson(url string, v interface{}) (response []byte, err error) {
+func PostJSON(url string, v interface{}) (response []byte, err error) {
 	bs, err := json.Marshal(v)
 	if err != nil {
 		return response, err
