@@ -2,9 +2,13 @@ package net
 
 import (
 	"net"
-	"strconv"
+	"regexp"
 	"strings"
 )
+
+// Regular expression to match intranet IP Address
+// include: 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
+const REGIntrannetIP = `^((192\.168|172\.([1][6-9]|[2]\d|3[01]))(\.([2][0-4]\d|[2][5][0-5]|[01]?\d?\d)){2}|10(\.([2][0-4]\d|[2][5][0-5]|[01]?\d?\d)){3})$`
 
 func IntranetIP() (ips []string, err error) {
 	ips = make([]string, 0)
@@ -62,26 +66,9 @@ func IntranetIP() (ips []string, err error) {
 }
 
 func IsIntranet(ipStr string) bool {
-	if strings.HasPrefix(ipStr, "10.") || strings.HasPrefix(ipStr, "192.168.") {
-		return true
+	matched, err := regexp.MatchString(REGIntrannetIP, ipStr)
+	if err != nil {
+		return false
 	}
-
-	if strings.HasPrefix(ipStr, "172.") {
-		// 172.16.0.0-172.31.255.255
-		arr := strings.Split(ipStr, ".")
-		if len(arr) != 4 {
-			return false
-		}
-
-		second, err := strconv.ParseInt(arr[1], 10, 64)
-		if err != nil {
-			return false
-		}
-
-		if second >= 16 && second <= 31 {
-			return true
-		}
-	}
-
-	return false
+	return matched
 }
