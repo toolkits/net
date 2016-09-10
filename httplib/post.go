@@ -9,26 +9,31 @@ import (
 )
 
 func PostJSON(url string, v interface{}) (response []byte, err error) {
-	bs, err := json.Marshal(v)
+	var bs []byte
+	bs, err = json.Marshal(v)
 	if err != nil {
-		return response, err
+		return
 	}
 
 	bf := bytes.NewBuffer(bs)
 
-	resp, err := http.Post(url, "application/json", bf)
+	var resp *http.Response
+	resp, err = http.Post(url, "application/json", bf)
 	if err != nil {
-		return response, err
+		return
+	}
+
+	if resp.Body != nil {
+		defer resp.Body.Close()
+		response, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return
+		}
 	}
 
 	if resp.StatusCode != 200 {
-		return []byte{}, errors.New("status code <> 200")
+		err = errors.New("status code not equals 200")
 	}
 
-	if resp.Body == nil {
-		return []byte{}, nil
-	}
-
-	defer resp.Body.Close()
-	return ioutil.ReadAll(resp.Body)
+	return
 }
