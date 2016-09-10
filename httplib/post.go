@@ -31,8 +31,8 @@ func PostJSON(url string, v interface{}) (response []byte, err error) {
 		}
 	}
 
-	if resp.StatusCode != 200 {
-		err = errors.New("status code not equals 200")
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		err = errors.New("status code is " + resp.StatusCode )
 	}
 
 	return
