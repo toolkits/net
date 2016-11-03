@@ -62,7 +62,7 @@ func IntranetIP() (ips []string, err error) {
 }
 
 func IsIntranet(ipStr string) bool {
-	if strings.HasPrefix(ipStr, "10.") || strings.HasPrefix(ipStr, "192.168.") {
+	if strings.HasPrefix(ipStr, "10.") || strings.HasPrefix(ipStr, "192.168.") || strings.HasPrefix(ipStr, "169.254.") {
 		return true
 	}
 
